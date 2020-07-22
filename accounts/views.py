@@ -1,8 +1,25 @@
 from django.shortcuts import render, redirect
 from .models import *
-from .forms import OrderForm
+from .forms import OrderForm, CreateUserForm
 from django.forms import inlineformset_factory
 from .filters import OrderFilter
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+
+def registerPage(request):
+    form = CreateUserForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        user = form.cleaned_data.get('username')
+        messages.success(request, 'Account was created for ' + user)
+        return redirect('login')
+    context = {'form': form}
+    return render(request, 'accounts/register.html', context)
+
+def loginPage(request):
+    
+    context = {}
+    return render(request, 'accounts/login.html', context)
 
 def home(request):
     orders = Order.objects.all()
