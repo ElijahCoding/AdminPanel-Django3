@@ -7,19 +7,11 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import unauthenticated_user, allowed_users, admin_only
-from django.contrib.auth.models import Group
-
 
 @unauthenticated_user
 def registerPage(request):
     form = CreateUserForm(request.POST or None)
     if form.is_valid():
-        user = form.save()
-
-        group = Group.objects.get(name='customer')
-        user.groups.add(group)
-        Customer.objects.create(user=user)
-
         username = form.cleaned_data.get('username')
         messages.success(request, 'Account was created for ' + username)
         return redirect('login')
